@@ -1,0 +1,59 @@
+.customer-home-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+}
+
+.customer-home-header {
+  text-align: center;
+  color: white;
+  margin-bottom: 30px;
+  padding-top: 40px;
+}
+
+.customer-home-header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.customer-home-header p {
+  font-size: 1.2rem;
+  opacity: 0.9;
+}
+
+.customer-home-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.dashboard-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  margin-bottom: 20px;
+}
+
+.dashboard-card h2 {
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.dashboard-card p {
+  color: #666;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .customer-home-header h1 {
+    font-size: 2rem;
+  }
+
+  .dashboard-card {
+    padding: 30px 24px;
+  }
+}
+
