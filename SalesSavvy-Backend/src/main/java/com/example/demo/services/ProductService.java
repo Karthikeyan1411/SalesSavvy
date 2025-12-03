@@ -10,9 +10,11 @@ import org.springframework.stereotype.Service;
 import com.example.demo.entities.Category;
 import com.example.demo.entities.Product;
 import com.example.demo.entities.ProductImage;
+import com.example.demo.entities.User;
 import com.example.demo.repositories.CategoryRepository;
 import com.example.demo.repositories.ProductImageRepository;
 import com.example.demo.repositories.ProductRepository;
+import com.example.demo.repositories.UserRepository;
 
 @Service
 public class ProductService {
@@ -48,5 +50,4 @@ public class ProductService {
 		}
 		return imageUrls;
 	}
-	
 }

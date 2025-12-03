@@ -75,6 +75,11 @@ public class JWTToken {
 	public void setExpiresAt(LocalDateTime expiresAt) {
 		this.expiresAt = expiresAt;
 	}
+
+	public JWTToken() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
 	
 	
 }
