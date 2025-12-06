@@ -7,8 +7,26 @@ export function ProfileDropdown({ username }) {
 
   const toggleDropdown = () => setIsOpen(!isOpen);
 
-  const handleLogout = () => {
-    console.log('User logged out');
+  const handleLogout = async () => {
+    try {
+      const response = await fetch('http://localhost:9090/api/auth/logout', {
+        method: 'POST', // Use POST as logout often involves session clearing
+        credentials: 'include', // Include credentials like cookies for authentication
+        headers: {
+          'Content-Type' : 'application/json',
+        }
+      });
+
+      if (response.ok) {
+        console.log('User successfully logged out');
+        window.location.href = '/';
+        // navigator('/'); // Redirect to login page
+      } else {
+        console.error('Failed to log out');
+      }
+    } catch (error) {
+      console.error('Error during logout:', error);
+    }
   };
 
   return (

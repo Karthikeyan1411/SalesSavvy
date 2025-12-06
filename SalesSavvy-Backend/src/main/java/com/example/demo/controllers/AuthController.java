@@ -16,10 +16,11 @@ import com.example.demo.entities.User;
 import com.example.demo.services.AuthService;
 
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:5174", allowCredentials = "true")
+@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:5174"}, allowedHeaders = "*", allowCredentials = "true")
 @RequestMapping("/api/auth")
 public class AuthController {
 
@@ -56,6 +57,37 @@ public class AuthController {
 			
 		} catch (RuntimeException e) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", e.getMessage()));
+		}
+	}
+	
+	@PostMapping("/logout")
+	@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:5174"}, allowCredentials = "true")
+	public ResponseEntity<Map<String, String>> logout (HttpServletRequest request, HttpServletResponse response) {
+		try {
+			// Retrieve authenticated user from the request
+			User user = (User) request.getAttribute("authenticatedUser");
+			String token = authService.generateToken(user);
+			
+			// Delegate logout operation to the service layer
+			authService.logout(user);
+			
+			// Clear the authentication token cookie
+			Cookie cookie = new Cookie("authToken", token);
+			cookie.setHttpOnly(true);
+			cookie.setSecure(false);
+			cookie.setMaxAge(3600);
+			cookie.setPath("/");
+			response.addCookie(cookie);
+			
+			// Success response
+			Map<String, String> responseBody = new HashMap<>();
+			responseBody.put("message", "Logout successful");
+			return ResponseEntity.ok(responseBody);
+		} catch (RuntimeException e) {
+			// Error response
+			Map<String, String> errorResponse = new HashMap<>();
+			errorResponse.put("message", "Logout failed");
+			return ResponseEntity.status(500).body(errorResponse);
 		}
 	}
 	

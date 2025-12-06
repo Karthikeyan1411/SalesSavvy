@@ -2,6 +2,7 @@ package com.example.demo.filters;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -31,11 +32,15 @@ public class AuthenticationFilter implements Filter {
 	private final AuthService authService;
 	private final UserRepository userRepository;
 	
-	private static final String ALLOWED_ORIGIN = "http://localhost:5174";
+	private static final List<String> ALLOWED_ORIGIN = List.of(
+			"http://localhost:5173",	
+			"http://localhost:5174"
+	);
 	
 	private static final String[] UNAUTHENTICATED_PATHS = {
 			"/api/users/register",
-			"/api/auth/login"
+			"/api/auth/login",
+			"/api/auth/logout"
 	};
 	
 	public AuthenticationFilter(AuthService authService, UserRepository userRepository) {
@@ -65,13 +70,14 @@ public class AuthenticationFilter implements Filter {
 		
 		// Allow unauthenticated paths
 		if (Arrays.asList(UNAUTHENTICATED_PATHS).contains(requestURI)) {
+			setCORSHeaders(httpRequest, httpResponse);
 			chain.doFilter(request, response);
 			return;
 		}
 		
 		// Handle preflight (OPTIONS) requests
 		if (httpRequest.getMethod().equalsIgnoreCase("OPTIONS")) {
-			setCORSHeaders(httpResponse);
+			setCORSHeaders(httpRequest, httpResponse);
 			return;
 		}
 		
@@ -102,7 +108,7 @@ public class AuthenticationFilter implements Filter {
 			return;
 		}
 		
-		if (requestURI.startsWith("/api/") && role != Role.CUSTOMER) {
+		if (requestURI.startsWith("/api/") && !requestURI.startsWith("/api/auth/logout") && role != Role.CUSTOMER) {
 			sendErrorResponse(httpResponse, HttpServletResponse.SC_FORBIDDEN, "Forbidden: Customer access required");
 			return;
 		}
@@ -112,8 +118,11 @@ public class AuthenticationFilter implements Filter {
 		chain.doFilter(request, response);
 	}
 	
-	private void setCORSHeaders(HttpServletResponse response) {
-		response.setHeader("Access-Control-Allow-Origin", ALLOWED_ORIGIN);
+	private void setCORSHeaders(HttpServletRequest request ,HttpServletResponse response) {
+		String origin = request.getHeader("origin");
+		if (origin != null && ALLOWED_ORIGIN.contains(origin)) {
+			response.setHeader("Access-Control-Allow-Origin", origin);
+		}
 		response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
 		response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
 		response.setHeader("Access-Control-Allow-Credentials", "true");

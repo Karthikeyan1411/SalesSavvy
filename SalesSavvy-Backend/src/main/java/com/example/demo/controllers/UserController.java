@@ -14,7 +14,7 @@ import com.example.demo.entities.User;
 import com.example.demo.services.UserService;
 
 @RestController
-@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:5174"}, allowCredentials = "true")
+@CrossOrigin(origins = {"http://localhost:5174"}, allowCredentials = "true")
 @RequestMapping("/api/users")
 public class UserController {
 
