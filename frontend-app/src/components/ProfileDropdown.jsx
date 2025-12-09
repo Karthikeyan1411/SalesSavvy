@@ -8,26 +8,31 @@ export function ProfileDropdown({ username }) {
   const toggleDropdown = () => setIsOpen(!isOpen);
 
   const handleLogout = async () => {
+    const role = localStorage.getItem("role");
+  
+    let url = "http://localhost:9090/api/auth/logout";
+  
+    if (role === "ADMIN") {
+      url = "http://localhost:9090/admin/auth/logout";
+    }
+  
     try {
-      const response = await fetch('http://localhost:9090/api/auth/logout', {
-        method: 'POST', // Use POST as logout often involves session clearing
-        credentials: 'include', // Include credentials like cookies for authentication
-        headers: {
-          'Content-Type' : 'application/json',
-        }
+      const response = await fetch(url, {
+        method: "POST",
+        credentials: "include"
       });
-
+  
       if (response.ok) {
-        console.log('User successfully logged out');
+        localStorage.clear();
         window.location.href = '/';
-        // navigator('/'); // Redirect to login page
       } else {
-        console.error('Failed to log out');
+        console.error("Logout failed");
       }
-    } catch (error) {
-      console.error('Error during logout:', error);
+    } catch (err) {
+      console.error(err);
     }
   };
+  
 
   return (
     <div className="profile-dropdown">

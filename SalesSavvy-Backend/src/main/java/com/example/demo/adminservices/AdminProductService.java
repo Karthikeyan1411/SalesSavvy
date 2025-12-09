@@ -2,6 +2,7 @@ package com.example.demo.adminservices;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -73,4 +74,8 @@ public class AdminProductService {
 		productRepository.deleteById(productId);
 	}
 	
+	public List<Product> getAllProducts() {
+	    return productRepository.findAll();
+	}
+
 }

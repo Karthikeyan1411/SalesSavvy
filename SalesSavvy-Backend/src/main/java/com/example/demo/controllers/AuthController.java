@@ -61,34 +61,17 @@ public class AuthController {
 	}
 	
 	@PostMapping("/logout")
-	@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:5174"}, allowCredentials = "true")
-	public ResponseEntity<Map<String, String>> logout (HttpServletRequest request, HttpServletResponse response) {
-		try {
-			// Retrieve authenticated user from the request
-			User user = (User) request.getAttribute("authenticatedUser");
-			String token = authService.generateToken(user);
-			
-			// Delegate logout operation to the service layer
-			authService.logout(user);
-			
-			// Clear the authentication token cookie
-			Cookie cookie = new Cookie("authToken", token);
-			cookie.setHttpOnly(true);
-			cookie.setSecure(false);
-			cookie.setMaxAge(3600);
-			cookie.setPath("/");
-			response.addCookie(cookie);
-			
-			// Success response
-			Map<String, String> responseBody = new HashMap<>();
-			responseBody.put("message", "Logout successful");
-			return ResponseEntity.ok(responseBody);
-		} catch (RuntimeException e) {
-			// Error response
-			Map<String, String> errorResponse = new HashMap<>();
-			errorResponse.put("message", "Logout failed");
-			return ResponseEntity.status(500).body(errorResponse);
-		}
+	public ResponseEntity<String> logout(HttpServletResponse response) {
+	    Cookie cookie = new Cookie("authToken", null);
+	    cookie.setHttpOnly(true);
+	    cookie.setSecure(false);
+	    cookie.setPath("/");   // IMPORTANT
+	    cookie.setMaxAge(0);
+
+	    response.addCookie(cookie);
+	    return ResponseEntity.ok("Logged out successfully");
 	}
+
+
 	
 }

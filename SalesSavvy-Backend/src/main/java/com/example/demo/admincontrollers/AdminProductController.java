@@ -3,9 +3,9 @@ package com.example.demo.admincontrollers;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,11 +31,19 @@ public class AdminProductController {
 	@PostMapping("/add")
 	public ResponseEntity<?> addProduct(@RequestBody Map<String, Object> productRequest) {
 		try {
+			System.out.println("Raw keys received:");
+			productRequest.forEach((k, v) -> System.out.println(k + " = " + v));
+			
+			System.out.println("Incoming product data: " + productRequest);
+			
 			String name = (String) productRequest.get("name");
 			String description = (String) productRequest.get("description");
 			Double price = Double.valueOf(String.valueOf(productRequest.get("price")));
-			Integer stock = (Integer) productRequest.get("stock");
-			Integer categoryId = (Integer) productRequest.get("categoryId");
+			Integer stock = Integer.valueOf(String.valueOf(productRequest.get("stock")));
+			
+			Object categoryObj = productRequest.get("categoryId");
+			Integer categoryId = categoryObj != null ? Integer.parseInt(categoryObj.toString()) : null;
+			
 			String imageUrl = (String) productRequest.get("imageUrl");
 			
 			Product addedProduct = adminProductService.addProductWithImage(name, description, price, stock, categoryId, imageUrl);
@@ -60,4 +68,14 @@ public class AdminProductController {
 		}
 	}
 	
+	@GetMapping("/all")
+	public ResponseEntity<?> getAllProducts() {
+	    try {
+	        return ResponseEntity.ok(adminProductService.getAllProducts());
+	    } catch (Exception e) {
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+	                .body("Something went wrong");
+	    }
+	}
+
 }

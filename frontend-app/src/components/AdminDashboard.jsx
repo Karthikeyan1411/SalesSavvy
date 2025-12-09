@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Footer } from "./Footer";
 import Logo from "./Logo";
 import "../assets/styles.css";
-// import CustomModal from "./CustomModal";
+import CustomModal from "./modals/CustomModel";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -66,16 +66,13 @@ const AdminDashboard = () => {
 
   const handleLogout = async () => {
     try {
-      const response = await fetch("http://localhost:9090/api/auth/logout", {
+      const response = await fetch("http://localhost:9090/admin/auth/logout", {
         method: "POST",
         credentials: "include",
-        headers: {
-            'Content-Type' : 'application/json',
-        }
       });
       if (response.ok) {
         console.log("User successfully logged out");
-        navigate("/admin");
+        window.location.href = '/admin';
       } else {
         console.error("Failed to log out");
       }
@@ -87,15 +84,44 @@ const AdminDashboard = () => {
   // Handlers for each modal action
   const handleAddProductSubmit = async (productData) => {
     try {
+      const payload = {
+        name: productData.name,
+        description: productData.description,
+        price: Number(productData.price),
+        stock: Number(productData.stock),
+        categoryId: Number(productData.categoryId), // if "quantity" is category
+        imageUrl: productData.imageUrl,
+      }
+
+      console.log("Sending productData:", productData);
+
       const response = await fetch("http://localhost:9090/admin/products/add", {
         method: "POST",
         credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(productData),
+        body: JSON.stringify(payload),
       });
-      const data = await response.json();
+
+      // Read raw body text Always
+      const text = await response.text();
+
+      let data;
+      try {
+        data = JSON.parse(text); // Try JSON
+      } catch {
+        data = { error: text }; // If not JSON, store as plain string
+      }
+      
+      // Handle errors gracefully instead of crashing UI
+      if (data.error) {
+        console.error("Error adding product:", data.error);
+        alert("Failed to add product: " + data.error);
+        return;
+      }
+
+      // UI stays safe - no white page
       setResponse({ product: data, imageUrl: productData.imageUrl });
       setModalType("addProduct");
     } catch (error) {

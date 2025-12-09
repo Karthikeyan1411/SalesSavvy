@@ -6,18 +6,22 @@ import ForgotPassword from './components/ForgotPassword';
 import './App.css';
 import AdminLogin from './components/AdminLogin';
 import AdminDashboard from './components/AdminDashboard';
+import CustomModal from './components/modals/CustomModel';
 
 function App() {
   return (
     <Router>
       <div className="App">
         <Routes>
-          <Route path="/login" element={<CustomerLogin />} />
-          <Route path='/admin' element={<AdminLogin />} />
-          <Route path='/admindashboard' element={<AdminDashboard />} />
           <Route path="/register" element={<RegistrationForm />} />
-          <Route path="/customerhome" element={<CustomerHome />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
+          
+          <Route path="/login" element={<CustomerLogin />} />
+          <Route path="/customerhome" element={<CustomerHome />} />
+          
+          <Route path='/admin' element={<AdminLogin />} />
+          <Route path='/admindashboard' element={<AdminDashboard />} /> 
+
           <Route path="/" element={<Navigate to="/login" replace />} />
         </Routes>
       </div>
